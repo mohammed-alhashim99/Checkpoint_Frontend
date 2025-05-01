@@ -1,9 +1,5 @@
-import './App.css'
+import HomePage from './pages/HomePage/HomePage'
 
-function App() {
-  return (
-    <h1>Welcome to check point SPA!</h1>
-  );
+export default function App() {
+  return <HomePage />
 }
-
-export default App;
