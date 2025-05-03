@@ -1,23 +1,27 @@
-import { useState } from 'react'
-import './styles.css'
+import { useState } from 'react';
 
-export default function SearchBar({ onSearch }) {
-  const [query, setQuery] = useState('')
+export default function SearchBar({ setResults }) {
+  const [query, setQuery] = useState('');
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    onSearch(query)
-  }
+  const handleSearch = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/search/?q=${query}`);
+      const data = await res.json();
+      setResults(data);
+    } catch (err) {
+      console.error('Search error:', err);
+    }
+  };
 
   return (
-    <form className="search-bar" onSubmit={handleSubmit}>
+    <div>
       <input
         type="text"
-        placeholder="Search games..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search for a game..."
       />
-      <button type="submit">Search</button>
-    </form>
-  )
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  );
 }

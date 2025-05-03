@@ -1,15 +1,20 @@
 import { Routes, Route } from 'react-router-dom';
-
-// Pages
+import Navbar from './components/Navbar/Navbar';
 import HomePage from './pages/HomePage/HomePage';
-import GameDetailPage from './pages/GameDetailPage/GameDetailPage'
-import ReviewPage from './pages/ReviewPage/ReviewPage'
-export default function AppRoutes() {
+import MyGamesPage from './pages/MyGamePage/MyGamePage';
+import GameDetailsPage from './pages/GameDetailPage/GameDetailPage';
+import ReviewsPage from './pages/ReviewPage/ReviewPage';
+
+export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/games/:id" element={<GameDetailPage />} />
-      <Route path="/reviews" element={<ReviewPage />} />
-    </Routes>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/mygames" element={<MyGamesPage />} />
+        <Route path="/games/:id" element={<GameDetailsPage />} />
+        <Route path="/reviews" element={<ReviewsPage/>} />
+      </Routes>
+    </>
   );
 }

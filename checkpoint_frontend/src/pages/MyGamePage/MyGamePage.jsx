@@ -1,37 +1,37 @@
 import { useEffect, useState } from 'react';
-import sendRequest from '../../utilities/sendRequest'; 
+import UserGameCard from '../../components/UserGameCard/UserGameCard';
+import sendRequest from '../../utilities/sendRequest';
 
 export default function MyGamesPage() {
   const [userGames, setUserGames] = useState([]);
 
   useEffect(() => {
-    async function fetchUserGames() {
+    async function fetchGames() {
       try {
-        const data = await sendRequest('/usergames');
+        const data = await sendRequest('/usergames/');
         setUserGames(data);
       } catch (err) {
-        console.error('Error loading user games:', err);
+        console.error('Failed to fetch user games:', err);
       }
     }
-
-    fetchUserGames();
+    fetchGames();
   }, []);
-
-  if (!userGames.length) return <p>No games added to your list yet.</p>;
 
   return (
     <div>
-      <h2>🎮 My Games</h2>
-      <ul>
-        {userGames.map((ug) => (
-          <li key={ug.id}>
-            Game ID: {ug.game} <br />
-            Completed: {ug.is_completed ? '✅' : '❌'} <br />
-            Playtime: {ug.playtime_hours}h <br />
-            Added at: {new Date(ug.added_at).toLocaleString()}
-          </li>
+      <h1>🎮 My Games</h1>
+      <div className="game-list">
+        {userGames.map((userGame) => (
+          <UserGameCard
+            key={userGame.id}
+            userGame={userGame}
+            refreshList={() => {
+              // refresh data after updating status
+              sendRequest('/usergames/').then(setUserGames);
+            }}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
