@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import sendRequest from '../../utilities/sendRequest'; 
+import sendRequest from '../../utilities/sendRequest';
+import GameCard from '../GameCard/GameCard';
 
 export default function GamesList() {
   const [games, setGames] = useState([]);
@@ -24,12 +25,11 @@ export default function GamesList() {
       <h2>All Games</h2>
       <ul>
         {games.map((game) => (
-          <li key={game.id}>
-            <strong>{game.game_name}</strong><br />
-            Platform: {game.platform}<br />
-            Release Date: {game.release_date}<br />
-            Rating: {game.rating}
-          </li>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+            {games.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
         ))}
       </ul>
     </div>

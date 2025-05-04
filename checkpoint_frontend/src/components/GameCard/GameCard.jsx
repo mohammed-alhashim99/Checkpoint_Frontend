@@ -11,35 +11,19 @@ export default function GameCard({ game }) {
     };
 
     try {
-      const createdGame = await sendRequest('/games/', 'POST', newGame);
-      console.log('createdGame.id:', createdGame.id)
-
-
-      if (!createdGame || !createdGame.id) {
-        alert('❌ Failed to retrieve game ID');
-        return;
-      }
-
-
-      await sendRequest('/usergames/', 'POST', {
-        game: createdGame.id,
-        is_completed: false,
-        playtime_hours: 0
-      });
-
-      alert('✅ Game added to My Games!');
+      await sendRequest('/games/', 'POST', newGame);
+      alert('Game added!');
     } catch (err) {
       console.error('Add error:', err);
-      alert('❌ Failed to add game.');
     }
   };
 
-
   return (
     <div className="game-card">
-      <img src={game.background_image || 'https://via.placeholder.com/300x200'} alt={game.name} />
+      <img src={game.image} alt={game.name} />
       <h3>{game.name}</h3>
-      {game.rating && <p>Rating: {game.rating}</p>}
+      <p>Released: {game.released}</p>
+      <p>Rating: {game.rating}</p>
       <button onClick={handleAdd}>Add</button>
     </div>
   );

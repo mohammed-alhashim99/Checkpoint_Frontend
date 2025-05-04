@@ -20,7 +20,7 @@ export default function MyGamesPage() {
   return (
     <div>
       <h1>🎮 My Games</h1>
-      <div className="game-list">
+      <div className="game-card">
         {userGames.map((userGame) => (
           <UserGameCard
             key={userGame.id}
