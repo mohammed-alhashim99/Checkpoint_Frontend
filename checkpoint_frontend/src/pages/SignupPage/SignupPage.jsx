@@ -1,6 +1,8 @@
 import "./styles.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import * as usersAPI from '../../utilities/users-api';
+
 
 
 export default function SignupPage({ setUser }) {

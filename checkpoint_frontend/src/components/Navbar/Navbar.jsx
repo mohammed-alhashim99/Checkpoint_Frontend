@@ -9,6 +9,9 @@ export default function Navbar() {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/mygames">My Games</Link></li>
         <li><Link to="/reviews">Reviews</Link></li>
+        <Link to="/login">Login</Link>
+        <Link to="/signup">Signup</Link>
+
       </ul>
     </nav>
   );

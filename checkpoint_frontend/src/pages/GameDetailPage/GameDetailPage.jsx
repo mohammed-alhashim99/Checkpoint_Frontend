@@ -33,7 +33,7 @@ export default function GameDetailsPage() {
         ...newReview,
         rating: parseFloat(newReview.rating),
         game: parseInt(id),
-        user: 1 // مؤقتًا إلى أن نضيف اليوزر الحقيقي
+        user: 1 
       });
       setNewReview({ rating: '', description: '' });
       const updated = await sendRequest('/reviews/');
