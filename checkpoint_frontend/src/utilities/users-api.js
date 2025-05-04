@@ -1,38 +1,43 @@
-import sendRequest from "./sendRequest"
+import sendRequest from "./sendRequest";
 const url = "/users/"
 
 export async function signup(formData) {
-  try {
-    const { access, user } = await sendRequest(`${url}signup/`, "POST", formData)
-    localStorage.setItem("token", access)
-    return user
-  } catch {
-    localStorage.removeItem("token")
-    return null
-  }
+    try {
+        const response = await sendRequest(`${url}signup/`, "POST", formData)
+        localStorage.setItem('token', response.access);
+        return response.user
+    } catch(err) {
+        localStorage.removeItem('token');
+        return null;
+    }
 }
 
 export async function login(formData) {
-  try {
-    const { access, user } = await sendRequest(`${url}login/`, "POST", formData)
-    localStorage.setItem("token", access)
-    return user
-  } catch {
-    localStorage.removeItem("token")
-    return null
-  }
+    try {
+        const response = await sendRequest(`${url}login/`, "POST", formData)
+        localStorage.setItem('token', response.access);
+        return response.user
+    } catch (err) {
+        localStorage.removeItem('token');
+        return null;
+    }
 }
 
 export function logout() {
-  localStorage.removeItem("token")
+    localStorage.removeItem('token');
 }
 
 export async function getUser() {
-  try {
-    const { access, user } = await sendRequest(`${url}token/refresh/`)
-    localStorage.setItem("token", access)
-    return user
-  } catch {
-    return null
-  }
+    try {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const response = await sendRequest(`${url}token/refresh/`)
+            localStorage.setItem('token', response.access);
+            return response.user
+        }
+        return null;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
 }
