@@ -10,7 +10,7 @@ import AddReviewPage from './pages/AddReviewPage/AddReviewPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 
 export default function App() {
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
   return (
     <>
       <Navbar />
@@ -18,13 +18,12 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/mygames" element={<MyGamesPage />} />
         <Route path="/games/:id" element={<GameDetailsPage />} />
-        <Route path="/reviews" element={<ReviewsPage/>} />
-        <Route path="/login" element={<LoginPage setUser={setUser} />} /> 
-       <Route path="/reviews/add" element={<AddReviewPage />} />
-       <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+        <Route path="/reviews" element={<ReviewsPage user={user} />} /> 
+        <Route path="/login" element={<LoginPage setUser={setUser} />} />
+        <Route path="/reviews/add" element={<AddReviewPage />} />
+        <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+      </Routes>
 
-    
-        </Routes>
     </>
   );
 }

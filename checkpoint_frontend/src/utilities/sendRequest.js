@@ -1,29 +1,42 @@
-export default async function sendRequest(url, method = 'GET', data = null) {
-  const token = localStorage.getItem('token');
+const BASE_URL = 'http://localhost:8000'; // ← غيّره إذا كنت تستخدم عنوان آخر لـ Django backend
 
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;  // ✅ التوكن يضاف هنا
-  }
-
+export default async function sendRequest(url, method = 'GET', body = null) {
   const options = {
     method,
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+    },
   };
 
-  if (data) {
-    options.body = JSON.stringify(data);
+  // ✅ أضف التوكن إذا كان موجود
+  const token = localStorage.getItem('token');
+  if (token) {
+    options.headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`http://localhost:8000${url}`, options);
+  // ✅ أضف البيانات إذا فيه body
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
 
+  // ✅ أرسل الطلب للـ backend وليس frontend
+  const res = await fetch(`${BASE_URL}${url}`, options);
+
+  // ❌ لو فيه خطأ، ارجع رسالة مفهومة
   if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Fetch failed: ${errText}`);
+    let errorMsg = `Request failed with status ${res.status}`;
+    try {
+      const errorData = await res.json();
+      errorMsg = errorData.error || errorMsg;
+    } catch {}
+    throw new Error(errorMsg);
   }
 
-  return res.json();
+  // ✅ حالة الحذف: No Content
+  if (res.status === 204) {
+    return null;
+  }
+
+  // ✅ تحليل JSON فقط لما يكون موجود
+  return await res.json();
 }
