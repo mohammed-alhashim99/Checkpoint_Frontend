@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import sendRequest from '../../utilities/sendRequest';
 
-export default function GameCard({ game }) {
+export default function GameCard({ game, user }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
 
@@ -19,26 +19,24 @@ export default function GameCard({ game }) {
   const handleAdd = async () => {
     setMessage('');
     try {
-      // 👇 check if the game already exists
       const allGames = await sendRequest('/games/');
       const existing = allGames.find(g => g.game_name === newGameObj.game_name);
-  
+
       const gameToUse = existing
-        ? existing  // موجودة
-        : await sendRequest('/games/', 'POST', newGameObj);  // مو موجودة
-  
-      // 👇 now try to add to usergames
+        ? existing
+        : await sendRequest('/games/', 'POST', newGameObj);
+
       await sendRequest('/usergames/', 'POST', {
         game: gameToUse.id,
         is_completed: false,
         playtime_hours: 0
       });
-  
+
       setMessage('✅ Game added to My Games!');
     } catch (err) {
       console.error('Add error:', err);
       const msg = err.message.toLowerCase();
-  
+
       if (
         msg.includes('already') ||
         msg.includes('exists') ||
@@ -50,13 +48,12 @@ export default function GameCard({ game }) {
       }
     }
   };
-  
 
   const handleReview = async () => {
     setMessage('');
     try {
       const createdGame = await sendRequest('/games/', 'POST', newGameObj);
-  
+
       navigate('/reviews/add', {
         state: {
           gameId: createdGame.id,
@@ -69,18 +66,21 @@ export default function GameCard({ game }) {
       setMessage('❌ Could not prepare review.');
     }
   };
-  
-  
 
   return (
     <div className="game-card">
       <img src={game.image_url || game.background_image || game.image} alt={game.name} />
       <h3>{game.name}</h3>
       <p>Released: {game.released}</p>
+      <p>Platforms: {newGameObj.platform}</p>
       <p>Rating: {game.rating || 'N/A'}</p>
 
-      <button onClick={handleAdd}>Add to My Games</button>
-      <button onClick={handleReview}>Add Review</button>
+      {user && (
+        <>
+          <button onClick={handleAdd}>Add to My Games</button>
+          <button onClick={handleReview}>Add Review</button>
+        </>
+      )}
 
       {message && <p style={{ marginTop: '10px', color: '#555' }}>{message}</p>}
     </div>
