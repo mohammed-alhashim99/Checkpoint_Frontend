@@ -1,50 +1,62 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import sendRequest from '../../utilities/sendRequest';
 
 export default function GameCard({ game }) {
   const navigate = useNavigate();
+  const [message, setMessage] = useState('');
+
+  const newGameObj = {
+    game_name: game.name,
+    release_date: game.released,
+    rating: game.rating,
+    platform: Array.isArray(game.platforms)
+      ? game.platforms.map(p => (p.platform?.name || p.name || p)).join(', ')
+      : '',
+    image_url: game.background_image || game.image,
+  };
 
   const handleAdd = async () => {
-    const newGame = {
-      game_name: game.name,
-      release_date: game.released,
-      rating: game.rating,
-      platform: Array.isArray(game.platforms)
-        ? game.platforms.map(p => (p.platform?.name || p.name || p)).join(', ')
-        : '',
-      image_url: game.background_image || game.image,
-    };
-
+    setMessage('');
     try {
-      const createdGame = await sendRequest('/games/', 'POST', newGame);
-
+      // 👇 check if the game already exists
+      const allGames = await sendRequest('/games/');
+      const existing = allGames.find(g => g.game_name === newGameObj.game_name);
+  
+      const gameToUse = existing
+        ? existing  // موجودة
+        : await sendRequest('/games/', 'POST', newGameObj);  // مو موجودة
+  
+      // 👇 now try to add to usergames
       await sendRequest('/usergames/', 'POST', {
-        game: createdGame.id,
+        game: gameToUse.id,
         is_completed: false,
         playtime_hours: 0
       });
-
-      alert('✅ Game added to My Games!');
+  
+      setMessage('✅ Game added to My Games!');
     } catch (err) {
       console.error('Add error:', err);
-      alert('❌ Failed to add game.');
+      const msg = err.message.toLowerCase();
+  
+      if (
+        msg.includes('already') ||
+        msg.includes('exists') ||
+        msg.includes('you already added')
+      ) {
+        setMessage('⚠️ This game is already in your list.');
+      } else {
+        setMessage('❌ Failed to add game.');
+      }
     }
   };
+  
 
   const handleReview = async () => {
-    const newGame = {
-      game_name: game.name,
-      release_date: game.released,
-      rating: game.rating,
-      platform: Array.isArray(game.platforms)
-        ? game.platforms.map(p => (p.platform?.name || p.name || p)).join(', ')
-        : '',
-      image_url: game.background_image || game.image,
-    };
-
+    setMessage('');
     try {
-      const createdGame = await sendRequest('/games/', 'POST', newGame);
-
+      const createdGame = await sendRequest('/games/', 'POST', newGameObj);
+  
       navigate('/reviews/add', {
         state: {
           gameId: createdGame.id,
@@ -52,12 +64,13 @@ export default function GameCard({ game }) {
           gameImage: createdGame.image_url
         }
       });
-      
     } catch (err) {
       console.error('Error preparing review:', err);
-      alert('❌ Could not prepare review');
+      setMessage('❌ Could not prepare review.');
     }
   };
+  
+  
 
   return (
     <div className="game-card">
@@ -68,6 +81,8 @@ export default function GameCard({ game }) {
 
       <button onClick={handleAdd}>Add to My Games</button>
       <button onClick={handleReview}>Add Review</button>
+
+      {message && <p style={{ marginTop: '10px', color: '#555' }}>{message}</p>}
     </div>
   );
 }

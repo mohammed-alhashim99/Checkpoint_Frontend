@@ -8,31 +8,26 @@ export default async function sendRequest(url, method = 'GET', body = null) {
     },
   };
 
-  
   const token = localStorage.getItem('token');
   if (token) {
     options.headers.Authorization = `Bearer ${token}`;
   }
 
-
   if (body) {
     options.body = JSON.stringify(body);
   }
 
-  
   const res = await fetch(`${BASE_URL}${url}`, options);
 
- 
   if (!res.ok) {
     let errorMsg = `Request failed with status ${res.status}`;
     try {
       const errorData = await res.json();
-      errorMsg = errorData.error || errorMsg;
+      errorMsg = Object.values(errorData).flat().join(' ') || errorMsg;
     } catch {}
     throw new Error(errorMsg);
   }
 
-  
   if (res.status === 204) {
     return null;
   }
