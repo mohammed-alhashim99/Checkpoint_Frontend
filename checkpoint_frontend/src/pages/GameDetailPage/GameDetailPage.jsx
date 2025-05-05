@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom'; // ✅ أضف useLocation
 import sendRequest from '../../utilities/sendRequest';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 
 export default function GameDetailsPage() {
   const { id } = useParams();
+  const location = useLocation(); // ✅
   const [game, setGame] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: '', description: '' });
 
-  // Get game details
   useEffect(() => {
     async function fetchGame() {
       const data = await sendRequest(`/games/${id}/`);
@@ -18,13 +18,17 @@ export default function GameDetailsPage() {
 
     async function fetchReviews() {
       const allReviews = await sendRequest('/reviews/');
-      const filtered = allReviews.filter((r) => r.game === parseInt(id));
+      const filtered = allReviews.filter((r) => {
+        // يدعم إذا r.game هو object أو رقم
+        const gameId = typeof r.game === 'object' ? r.game.id : r.game;
+        return gameId === parseInt(id);
+      });
       setReviews(filtered);
     }
 
     fetchGame();
     fetchReviews();
-  }, [id]);
+  }, [id, location.key]); // ✅ يحدث كل ما ترجع لنفس الصفحة
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,11 +37,17 @@ export default function GameDetailsPage() {
         ...newReview,
         rating: parseFloat(newReview.rating),
         game: parseInt(id),
-        user: 1 
+        user: 1,
       });
       setNewReview({ rating: '', description: '' });
+
+      // ✅ إعادة تحميل المراجعات بعد الإضافة
       const updated = await sendRequest('/reviews/');
-      setReviews(updated.filter((r) => r.game === parseInt(id)));
+      const filtered = updated.filter((r) => {
+        const gameId = typeof r.game === 'object' ? r.game.id : r.game;
+        return gameId === parseInt(id);
+      });
+      setReviews(filtered);
     } catch (err) {
       console.error('Failed to add review:', err);
     }

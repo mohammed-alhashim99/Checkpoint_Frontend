@@ -1,43 +1,39 @@
+// user-api.js
+
 import sendRequest from "./sendRequest";
-const url = "/users/"
+
+const url = "/users/";
 
 export async function signup(formData) {
-    try {
-        const response = await sendRequest(`${url}signup/`, "POST", formData)
-        localStorage.setItem('token', response.access);
-        return response.user
-    } catch(err) {
-        localStorage.removeItem('token');
-        return null;
-    }
+  try {
+    const response = await sendRequest(`${url}signup/`, "POST", formData);
+    localStorage.setItem("token", response.access);
+    localStorage.setItem("user", JSON.stringify(response.user));
+    return response.user;
+  } catch (err) {
+    localStorage.removeItem("token");
+    return null;
+  }
 }
 
 export async function login(formData) {
-    try {
-        const response = await sendRequest(`${url}login/`, "POST", formData)
-        localStorage.setItem('token', response.access);
-        return response.user
-    } catch (err) {
-        localStorage.removeItem('token');
-        return null;
-    }
+  try {
+    const response = await sendRequest(`${url}login/`, "POST", formData);
+    localStorage.setItem("token", response.access);
+    localStorage.setItem("user", JSON.stringify(response.user)); 
+    return response.user;
+  } catch (err) {
+    localStorage.removeItem("token");
+    return null;
+  }
 }
 
 export function logout() {
-    localStorage.removeItem('token');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user"); 
 }
 
-export async function getUser() {
-    try {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const response = await sendRequest(`${url}token/refresh/`)
-            localStorage.setItem('token', response.access);
-            return response.user
-        }
-        return null;
-    } catch (err) {
-        console.log(err);
-        return null;
-    }
+export function getUser() {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
 }
