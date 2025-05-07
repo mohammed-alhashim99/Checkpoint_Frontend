@@ -62,7 +62,7 @@ export default function App() {
         {user ? (
           <Routes>
             <Route path="/" element={<HomePage user={user} setUser={setUser} />} />
-            <Route path="/mygames" element={<MyGamesPage />} />
+            <Route path="/mygames" element={<MyGamesPage currentUser={user} />} />
             <Route path="/games/:gameId" element={<GameDetails reviews={reviews} user={user} />} />
             <Route path="/reviews" element={<ReviewsPage user={user} />} />
             <Route path="/reviews/add" element={<ReviewFormPage createReview={true} />} />

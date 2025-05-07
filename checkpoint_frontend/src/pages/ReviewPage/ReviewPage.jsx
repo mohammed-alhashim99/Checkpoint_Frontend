@@ -17,48 +17,58 @@ export default function ReviewsPage({ user }) {
     fetchReviews();
   }, []);
 
- 
+  // ⬇️ دمج المراجعات حسب اللعبة
   const reviewsByGame = {};
   for (const review of reviews) {
-    const gameId = typeof review.game === 'object' ? review.game.game_id : null;
-    if (!reviewsByGame[gameId]) reviewsByGame[gameId] = {
-      game: review.game,
-      reviews: []
-    };
+    const gameId = review.game?.game_id;
+    if (!reviewsByGame[gameId]) {
+      reviewsByGame[gameId] = {
+        game: review.game,
+        reviews: []
+      };
+    }
     reviewsByGame[gameId].reviews.push(review);
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>🎮 All Reviews</h1>
+    <div>
+      <h1 className="page-title">🎮 All Reviews</h1>
+      <div className="game-list">
+        {Object.values(reviewsByGame).map(({ game, reviews }) => (
+          <div key={game.game_id} className="game-card">
+            <img
+              src={game.image_url}
+              alt={game.game_name}
+              style={{
+                height: "300px",
+                width: "100%",
+                objectFit: "cover",
+                borderRadius: "12px",
+                border: "1px solid rgba(255,255,255, 0.255)",
+                marginBottom: "10px"
+              }}
+            />
+            <h3 className="game-title">{game.game_name}</h3>
+            <p>📅 {game.release_date}</p>
+            <p>🎮 Platforms: {game.platform}</p>
 
-      {Object.values(reviewsByGame).map(({ game, reviews }) => (
-        <div key={game.game_id} style={{ marginBottom: '40px' }}>
-          <img
-            src={game.image_url}
-            alt={game.game_name}
-            style={{ maxWidth: '400px', borderRadius: '8px' }}
-          />
-          <h2>{game.game_name}</h2>
-          <p><strong>📅</strong> {game.release_date}</p>
-          <p><strong>🕹️ Platform:</strong> {game.platform}</p>
-
-          {reviews.map((review) => (
-            <div key={review.id} style={{ marginTop: '10px', marginLeft: '20px' }}>
-              <p><strong>👤 User:</strong> {review.user}</p>
-              <p><strong>⭐ User Rating:</strong> {review.rating}</p>
-              <p>{review.description}</p>
-
-              {user?.username === review.user && (
-                <div>
-                  <Link to={`/reviews/${review.id}/edit`} style={{ marginRight: '10px' }}>✏️ Edit</Link>
-                  <Link to={`/reviews/${review.id}/delete`} style={{ color: 'red' }}>🗑️ Delete</Link>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      ))}
+            {reviews.map((review) => (
+              <div key={review.id}>
+                <p>👤 User: {review.user}</p>
+                <p>⭐ User Rating: {review.rating}</p>
+                <p>{review.description}</p>
+                {user?.username === review.user && (
+                  <div className="button-wrapper">
+                    <Link to={`/reviews/${review.id}/edit`} className="game-btn fill">✏️ Edit</Link>
+                    <Link to={`/reviews/${review.id}/delete`} className="game-btn outline">🗑️ Delete</Link>
+                  </div>
+                )}
+                
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as usersAPI from "../../utilities/users-api"
+import * as usersAPI from "../../utilities/users-api";
+
 export default function LoginPage({ setUser }) {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
@@ -19,7 +20,7 @@ export default function LoginPage({ setUser }) {
         return;
       }
       setUser(user);
-      navigate("/mygames"); 
+      navigate("/mygames");
     } catch (err) {
       console.error("Login error:", err);
       setError("❌ Something went wrong.");
@@ -27,9 +28,10 @@ export default function LoginPage({ setUser }) {
   };
 
   return (
-    <div className="form-container login">
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="auth-form-container">
+      <form onSubmit={handleSubmit} className="auth-form-box">
+        <h2>Log In</h2>
+
         <input
           type="text"
           name="username"
@@ -47,8 +49,9 @@ export default function LoginPage({ setUser }) {
           required
         />
         <button type="submit">Login</button>
+
+        {error && <p className="error-msg">{error}</p>}
       </form>
-      {error && <p className="error-msg">{error}</p>}
     </div>
   );
 }

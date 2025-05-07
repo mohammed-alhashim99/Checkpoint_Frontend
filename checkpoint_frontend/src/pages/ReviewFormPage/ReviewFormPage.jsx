@@ -3,12 +3,7 @@ import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import * as reviewAPI from "../../utilities/review-api";
 
 export default function ReviewFormPage({ createReview, editReview, deleteReview }) {
-  const initialState = {
-    rating: 0,
-    description: "",
-    game: "",
-  };
-
+  const initialState = { rating: 0, description: "", game: "" };
   const [formData, setFormData] = useState(initialState);
   const [currReview, setCurrReview] = useState(null);
   const { id } = useParams();
@@ -34,15 +29,9 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
       }
     }
 
-    if ((editReview || deleteReview) && id) {
-      getReview();
-    }
-
+    if ((editReview || deleteReview) && id) getReview();
     if (createReview && passedGameId) {
-      setFormData(prev => ({
-        ...prev,
-        game: passedGameId,
-      }));
+      setFormData(prev => ({ ...prev, game: passedGameId }));
     }
   }, [id, createReview, passedGameId]);
 
@@ -56,7 +45,6 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
       if (editReview) {
         await reviewAPI.update(id, formData);
       } else {
-        
         const allGames = await reviewAPI.getGames();
         let gameObj = allGames.find(g => g.game_id === passedGameId);
 
@@ -71,11 +59,7 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
           });
         }
 
-        const reviewData = {
-          ...formData,
-          game: gameObj.id,
-        };
-
+        const reviewData = { ...formData, game: gameObj.id };
         await reviewAPI.create(reviewData);
       }
 
@@ -99,32 +83,50 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
 
   if (deleteReview && currReview) {
     return (
-      <>
-        <h1>Delete Review</h1>
-        <p>Are you sure you want to delete this review?</p>
-        <form onSubmit={handleDelete}>
-          <Link to="/reviews" className="btn secondary">Cancel</Link>
-          <button type="submit" className="btn danger">Yes - Delete</button>
+      <div className="auth-form-container">
+        <form onSubmit={handleDelete} className="auth-form-box">
+          <h2>Delete Review</h2>
+          <p>Are you sure you want to delete this review?</p>
+          <div className="button-wrapper">
+            <Link to="/reviews" className="game-btn outline">Cancel</Link>
+            <button type="submit" className="game-btn fill">Yes - Delete</button>
+          </div>
         </form>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <h1>{editReview ? "Edit Review" : "Add Review"}</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Rating:</label>
+        <div className="auth-form-container">
+    <form onSubmit={handleSubmit} className="auth-form-box">
+      {(passedImage || currReview?.game?.image_url) && (
+        <img
+          src={passedImage || currReview.game.image_url}
+          alt={passedGameName || currReview.game.game_name}
+          style={{
+            height: "250px",
+            width: "100%",
+            objectFit: "cover",
+            borderRadius: "12px",
+            marginBottom: "16px",
+            border: "1px solid rgba(255, 255, 255, 0.1)"
+          }}
+        />
+      )}
+        <h2>{editReview ? "Edit Review" : "Add Review"}</h2>
+
+        <label>Rating (0–5):</label>
         <input
           type="number"
           name="rating"
           min="0"
-          max="10"
+          max="5"
           step="0.1"
           value={formData.rating}
           onChange={handleChange}
           required
         />
+
         <label>Description:</label>
         <textarea
           name="description"
@@ -132,9 +134,13 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
           value={formData.description}
           onChange={handleChange}
           required
+          rows={4}
         />
-        <button type="submit">{editReview ? "Update Review" : "Submit Review"}</button>
+
+        <button type="submit" className="game-btn fill">
+          {editReview ? "Update Review" : "Submit Review"}
+        </button>
       </form>
-    </>
+    </div>
   );
 }

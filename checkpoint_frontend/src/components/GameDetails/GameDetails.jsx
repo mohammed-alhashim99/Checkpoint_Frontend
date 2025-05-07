@@ -24,7 +24,7 @@ export default function GameDetails({ reviews, user }) {
   if (!game) return <p>❌ Game not found in state</p>;
 
   return (
-    <div className="game-details" style={{ padding: '20px' }}>
+    <div className="game-card" style={{ padding: '20px' }}>
       <h2>{game.game_name}</h2>
       <img
         src={game.image_url}
@@ -35,14 +35,14 @@ export default function GameDetails({ reviews, user }) {
       <p><strong>Rating:</strong> {game.rating}</p>
       <p><strong>Platform:</strong> {game.platform}</p>
 
-      <h3 style={{ marginTop: '20px' }}>Reviews:</h3>
+      <h3>Reviews:</h3>
       {gameReviews.length > 0 ? (
         <ul>
           {gameReviews.map((review) => (
-            <li key={review.id} style={{ marginBottom: '15px' }}>
-              <p><strong>Rating:</strong> {review.rating} / 5</p>
+            <li key={review.id}  >
+              <p><strong>User:</strong>  {review.user?.username || review.user}</p>
+              <p><strong>Rating: </strong> {review.rating} / 5</p>
               <p><strong>Description:</strong> {review.description}</p>
-              <p><strong>User:</strong> {review.user?.username || review.user}</p>
             </li>
           ))}
         </ul>
@@ -52,6 +52,7 @@ export default function GameDetails({ reviews, user }) {
 
       {user && (
         <button
+        className='game-btn'
           onClick={() => {
             if (userReview) {
               navigate(`/reviews/${userReview.id}/edit`);
@@ -65,7 +66,7 @@ export default function GameDetails({ reviews, user }) {
               });
             }
           }}
-          style={{ marginTop: '20px' }}
+          
         >
           {userReview ? 'Edit Review' : 'Add Review'}
         </button>

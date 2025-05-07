@@ -8,36 +8,36 @@ export default function ReviewCard({ review, currentUser }) {
   }
 
   return (
-    <div className="review-card">
+    <div className="game-card">
       {game.image_url && (
         <img
           src={game.image_url}
           alt={game.game_name}
-          width="100%"
           style={{
-            maxWidth: "400px",
-            borderRadius: "8px",
+            height: "300px",
+            width: "100%",
+            objectFit: "cover",
+            borderRadius: "12px",
+            border: "1px solid rgba(255,255,255, 0.255)",
             marginBottom: "10px"
           }}
         />
       )}
 
-      <h3>{game.game_name}</h3>
+      <h3 className="game-title">{game.game_name}</h3>
       <p>📅 {game.release_date}</p>
-      <p>🎮 Platform: {game.platform}</p>
+      <p>🎮 Platforms: {game.platform}</p>
 
-      <p><strong>👤 Reviewer: {user}</strong></p>
+      <p>👤 User: {user}</p>
       <p>⭐ User Rating: {rating}</p>
       <p>{description}</p>
 
       {currentUser?.username === user && (
-        <div className="review-actions">
-          <Link to={`/reviews/${id}/edit`} className="btn">✏️ Edit</Link>
-          <Link to={`/reviews/${id}/delete`} className="btn danger">🗑️ Delete</Link>
+        <div className="button-wrapper">
+          <Link to={`/reviews/${id}/edit`} className="game-btn fill">✏️ Edit</Link>
+          <Link to={`/reviews/${id}/delete`} className="game-btn outline">🗑️ Delete</Link>
         </div>
       )}
-
-      <hr />
     </div>
   );
 }
