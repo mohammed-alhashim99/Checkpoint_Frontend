@@ -19,7 +19,7 @@ export default function GameDetailsPage() {
     async function fetchReviews() {
       const allReviews = await sendRequest('/reviews/');
       const filtered = allReviews.filter((r) => {
-        // يدعم إذا r.game هو object أو رقم
+       
         const gameId = typeof r.game === 'object' ? r.game.id : r.game;
         return gameId === parseInt(id);
       });
@@ -28,7 +28,7 @@ export default function GameDetailsPage() {
 
     fetchGame();
     fetchReviews();
-  }, [id, location.key]); // ✅ يحدث كل ما ترجع لنفس الصفحة
+  }, [id, location.key]); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +41,7 @@ export default function GameDetailsPage() {
       });
       setNewReview({ rating: '', description: '' });
 
-      // ✅ إعادة تحميل المراجعات بعد الإضافة
+     
       const updated = await sendRequest('/reviews/');
       const filtered = updated.filter((r) => {
         const gameId = typeof r.game === 'object' ? r.game.id : r.game;

@@ -22,7 +22,7 @@ export default function Navbar({ user, setUser }) {
           <>
             <li><Link to="/mygames">My Games</Link></li>
             <form id="logout-form" onSubmit={handleLogout}>
-              <button type="submit">Log out</button>
+              <button className='game-btn' type="submit">Log out</button>
             </form>
           </>
         ) : (

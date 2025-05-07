@@ -1,5 +1,3 @@
-// user-api.js
-
 import sendRequest from "./sendRequest";
 
 const url = "/users/";

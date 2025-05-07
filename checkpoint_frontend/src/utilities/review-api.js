@@ -2,22 +2,26 @@ import sendRequest from './sendRequest';
 
 const BASE_URL = '/reviews/';
 
-// 🔸 إنشاء مراجعة جديدة
-export async function create(data) {
-  return sendRequest(BASE_URL, 'POST', data);
+export function create(reviewData) {
+  return sendRequest('/reviews/', 'POST', reviewData);
 }
 
-// 🔸 تعديل مراجعة موجودة
-export async function update(id, data) {
-  return sendRequest(`${BASE_URL}${id}/`, 'PUT', data);
+export function update(id, reviewData) {
+  return sendRequest(`/reviews/${id}/`, 'PUT', reviewData);
 }
 
-// 🔸 جلب مراجعة واحدة (للتعديل أو الحذف)
-export async function show(id) {
-  return sendRequest(`${BASE_URL}${id}/`);
+export function show(id) {
+  return sendRequest(`/reviews/${id}/`);
 }
 
-// 🔸 حذف مراجعة
-export async function deleteReview(id) {
-  return sendRequest(`${BASE_URL}${id}/`, 'DELETE');
+export function deleteReview(id) {
+  return sendRequest(`/reviews/${id}/`, 'DELETE');
+}
+
+export function getGames() {
+  return sendRequest('/games/');
+}
+
+export function addGame(gameData) {
+  return sendRequest('/games/', 'POST', gameData);
 }

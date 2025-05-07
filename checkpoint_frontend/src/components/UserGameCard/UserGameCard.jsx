@@ -8,7 +8,7 @@ export default function UserGameCard({ userGame, refreshList }) {
       await sendRequest(`/usergames/${id}/`, 'PATCH', {
         is_completed: !is_completed
       });
-      refreshList(); // refresh the parent list
+      refreshList(); 
     } catch (err) {
       console.error('Error updating game status:', err);
     }

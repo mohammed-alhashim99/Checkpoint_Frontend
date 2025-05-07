@@ -1,3 +1,5 @@
+import './styles.css'
+
 import { useState } from 'react';
 
 export default function SearchBar({ setResults }) {
@@ -16,12 +18,13 @@ export default function SearchBar({ setResults }) {
   return (
     <div>
       <input
+      className='search-input'
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder="Search for a game..."
       />
-      <button onClick={handleSearch}>Search</button>
+      <button className='game-btn' onClick={handleSearch}>Search</button>
     </div>
   );
 }

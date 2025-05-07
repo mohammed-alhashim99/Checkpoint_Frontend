@@ -3,7 +3,7 @@ import { useState } from "react";
 import sendRequest from "../../utilities/sendRequest";
 
 export default function AddReviewPage() {
-  const { state } = useLocation(); // يحتوي على gameId, gameName
+  const { state } = useLocation(); 
   const navigate = useNavigate();
 
   const [rating, setRating] = useState('');

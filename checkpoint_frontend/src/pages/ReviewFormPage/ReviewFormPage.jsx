@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import * as reviewAPI from "../../utilities/review-api";
 
 export default function ReviewFormPage({ createReview, editReview, deleteReview }) {
@@ -13,6 +13,11 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
   const [currReview, setCurrReview] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const passedGameId = location.state?.gameId;
+  const passedGameName = location.state?.gameName;
+  const passedImage = location.state?.imageUrl;
 
   useEffect(() => {
     async function getReview() {
@@ -29,8 +34,17 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
       }
     }
 
-    if ((editReview || deleteReview) && id) getReview();
-  }, [id]);
+    if ((editReview || deleteReview) && id) {
+      getReview();
+    }
+
+    if (createReview && passedGameId) {
+      setFormData(prev => ({
+        ...prev,
+        game: passedGameId,
+      }));
+    }
+  }, [id, createReview, passedGameId]);
 
   function handleChange(evt) {
     setFormData({ ...formData, [evt.target.name]: evt.target.value });
@@ -42,10 +56,29 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
       if (editReview) {
         await reviewAPI.update(id, formData);
       } else {
-        await reviewAPI.create(formData);
+        
+        const allGames = await reviewAPI.getGames();
+        let gameObj = allGames.find(g => g.game_id === passedGameId);
+
+        if (!gameObj) {
+          gameObj = await reviewAPI.addGame({
+            game_id: passedGameId,
+            game_name: passedGameName,
+            release_date: '2023-01-01',
+            rating: 0,
+            platform: 'Unknown',
+            image_url: passedImage || ''
+          });
+        }
+
+        const reviewData = {
+          ...formData,
+          game: gameObj.id,
+        };
+
+        await reviewAPI.create(reviewData);
       }
 
-      // ✅ يرجع إلى صفحة المراجعات
       navigate("/reviews");
     } catch (err) {
       console.log("Error saving review:", err);
@@ -56,7 +89,6 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
     evt.preventDefault();
     try {
       await reviewAPI.deleteReview(id);
-      // ✅ يرجع إلى صفحة المراجعات بعد الحذف
       navigate("/reviews");
     } catch (err) {
       console.log("Error deleting review:", err);
@@ -65,16 +97,18 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
 
   if ((editReview || deleteReview) && !currReview) return <h1>Loading...</h1>;
 
-  if (deleteReview && currReview) return (
-    <>
-      <h1>Delete Review</h1>
-      <p>Are you sure you want to delete this review?</p>
-      <form onSubmit={handleDelete}>
-        <Link to="/reviews" className="btn secondary">Cancel</Link>
-        <button type="submit" className="btn danger">Yes - Delete</button>
-      </form>
-    </>
-  );
+  if (deleteReview && currReview) {
+    return (
+      <>
+        <h1>Delete Review</h1>
+        <p>Are you sure you want to delete this review?</p>
+        <form onSubmit={handleDelete}>
+          <Link to="/reviews" className="btn secondary">Cancel</Link>
+          <button type="submit" className="btn danger">Yes - Delete</button>
+        </form>
+      </>
+    );
+  }
 
   return (
     <>
@@ -99,18 +133,6 @@ export default function ReviewFormPage({ createReview, editReview, deleteReview 
           onChange={handleChange}
           required
         />
-        {createReview && (
-          <>
-            <label>Game ID:</label>
-            <input
-              type="number"
-              name="game"
-              value={formData.game}
-              onChange={handleChange}
-              required
-            />
-          </>
-        )}
         <button type="submit">{editReview ? "Update Review" : "Submit Review"}</button>
       </form>
     </>

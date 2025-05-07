@@ -26,7 +26,7 @@ export default function MyGamesPage() {
             key={userGame.id}
             userGame={userGame}
             refreshList={() => {
-              // refresh data after updating status
+              
               sendRequest('/usergames/').then(setUserGames);
             }}
           />
