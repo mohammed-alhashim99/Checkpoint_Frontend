@@ -6,14 +6,11 @@ import './styles.css';
 // ✅ Theme Toggle Component
 export function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
-    // استرجع الثيم من localStorage عند بداية التشغيل
     return localStorage.getItem('theme') || 'dark';
   });
 
   useEffect(() => {
-    // طبّق الـ class على body
     document.body.className = theme === "dark" ? "dark-theme" : "light-theme";
-    // خزّن القيمة
     localStorage.setItem('theme', theme);
   }, [theme]);
 
@@ -27,7 +24,6 @@ export function ThemeToggle() {
   );
 }
 
-// ✅ Navbar Component
 export default function Navbar({ user, setUser }) {
   const navigate = useNavigate();
 
@@ -47,6 +43,7 @@ export default function Navbar({ user, setUser }) {
         {user ? (
           <>
             <li><Link to="/mygames">My Games</Link></li>
+            <li><Link to="/profile">profile</Link></li>
             <li>
               <form id="logout-form" onSubmit={handleLogout}>
                 <button className='game-btn outline' type="submit">Log out</button>

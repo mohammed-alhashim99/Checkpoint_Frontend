@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar/Navbar';
 import HomePage from './pages/HomePage/HomePage';
 import MyGamesPage from './pages/MyGamePage/MyGamePage';
-import GameDetailsPage from './pages/GameDetailPage/GameDetailPage';
+import UserProfile from './pages/UserProfile/UserProfile';
 import ReviewFormPage from './pages/ReviewFormPage/ReviewFormPage';
 import ReviewsPage from './pages/ReviewPage/ReviewPage';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -18,7 +18,6 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [games, setGames] = useState([]);
-  const location = useLocation();
 
   
 
@@ -62,6 +61,7 @@ export default function App() {
         {user ? (
           <Routes>
             <Route path="/" element={<HomePage user={user} setUser={setUser} />} />
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="/mygames" element={<MyGamesPage currentUser={user} />} />
             <Route path="/games/:gameId" element={<GameDetails reviews={reviews} user={user} />} />
             <Route path="/reviews" element={<ReviewsPage user={user} />} />
