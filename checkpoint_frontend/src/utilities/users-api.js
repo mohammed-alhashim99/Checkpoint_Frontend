@@ -4,7 +4,14 @@ const url = "/users/";
 
 export async function signup(formData) {
   try {
-    const response = await sendRequest(`${url}signup/`, "POST", formData);
+    const formattedData = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+    };
+    const response = await sendRequest(`${url}signup/`, "POST", formattedData);
     localStorage.setItem("token", response.access);
     localStorage.setItem("user", JSON.stringify(response.user));
     return response.user;
@@ -13,6 +20,7 @@ export async function signup(formData) {
     return null;
   }
 }
+
 
 export async function login(formData) {
   try {

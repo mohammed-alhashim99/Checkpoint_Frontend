@@ -19,11 +19,14 @@ export default function UserProfile() {
   if (!userData) return <p>Loading...</p>;
 
   return (
-    <div className="user-profile">
-      <h1>👤 {userData.username}'s Profile</h1>
+    <div className="game-card">
+      <h1>{userData.username}</h1>
+      <strong>
       <p>Email: {userData.email}</p>
       <p>First Name: {userData.first_name}</p>
       <p>Last Name: {userData.last_name}</p>
+      <p>Member since: {userData.date_joined}</p>
+      </strong>
     </div>
   );
 }

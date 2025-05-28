@@ -5,13 +5,13 @@ import * as usersAPI from '../../utilities/users-api';
 
 export default function SignupPage({ setUser }) {
   const navigate = useNavigate();
-  const initialState = { username: "", password: "", confirmPassword: "", email: "" };
+  const initialState = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "" };
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({ username: '', password: '', email: '', confirmPassword: '' });
 
   let disabledSubmitBtn =
     Object.values(errors).every(val => val === "") &&
-    Object.values(formData).every(val => val !== "")
+      Object.values(formData).every(val => val !== "")
       ? false
       : true;
 
@@ -61,6 +61,32 @@ export default function SignupPage({ setUser }) {
     <div className="auth-form-container">
       <form onSubmit={handleSubmit} className="auth-form-box">
         <h2>Sign Up</h2>
+
+        <div className="form-group">
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            minLength="3"
+            maxLength="150"
+            placeholder="First Name"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            minLength="3"
+            maxLength="150"
+            placeholder="Last Name"
+            required
+          />
+        </div>
 
         <div className="form-group">
           <input
