@@ -1,6 +1,6 @@
 import "./styles.css";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import * as usersAPI from '../../utilities/users-api';
 
 export default function SignupPage({ setUser }) {
@@ -9,11 +9,9 @@ export default function SignupPage({ setUser }) {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({ username: '', password: '', email: '', confirmPassword: '' });
 
-  let disabledSubmitBtn =
+  const disabledSubmitBtn =
     Object.values(errors).every(val => val === "") &&
-      Object.values(formData).every(val => val !== "")
-      ? false
-      : true;
+    Object.values(formData).every(val => val !== "");
 
   function handleChange(evt) {
     setFormData({ ...formData, [evt.target.name]: evt.target.value });
@@ -47,13 +45,15 @@ export default function SignupPage({ setUser }) {
         alert("Signup failed. Please check your information.");
         return;
       }
-      setUser(newUser);
+
+      // تخزين الإيميل مؤقتًا وتمريره للصفحة التالية
+      localStorage.setItem("email_for_verification", formData.email);
+      navigate("/verify-otp", { state: { email: formData.email } });
+
       setFormData(initialState);
-      navigate("/finches");
     } catch (err) {
       console.error("Signup error:", err);
       alert("Something went wrong during signup.");
-      setUser(null);
     }
   }
 
@@ -68,8 +68,6 @@ export default function SignupPage({ setUser }) {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            minLength="3"
-            maxLength="150"
             placeholder="First Name"
             required
           />
@@ -81,8 +79,6 @@ export default function SignupPage({ setUser }) {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            minLength="3"
-            maxLength="150"
             placeholder="Last Name"
             required
           />
@@ -94,8 +90,6 @@ export default function SignupPage({ setUser }) {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            minLength="3"
-            maxLength="150"
             placeholder="Username"
             required
           />
@@ -138,7 +132,7 @@ export default function SignupPage({ setUser }) {
           {errors.confirmPassword && <p className="error-msg">{errors.confirmPassword}</p>}
         </div>
 
-        <button type="submit" disabled={disabledSubmitBtn}>
+        <button type="submit" disabled={!disabledSubmitBtn}>
           Submit
         </button>
       </form>

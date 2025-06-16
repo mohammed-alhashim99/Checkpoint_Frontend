@@ -39,7 +39,14 @@ export function logout() {
   localStorage.removeItem("user"); 
 }
 
+
 export function getUser() {
   const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+  if (!user || user === "undefined") return null;
+  try {
+    return JSON.parse(user);
+  } catch (err) {
+    console.error("❌ Failed to parse user from localStorage:", err);
+    return null;
+  }
 }

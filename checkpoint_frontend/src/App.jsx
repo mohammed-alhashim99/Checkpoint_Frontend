@@ -10,6 +10,7 @@ import ReviewsPage from './pages/ReviewPage/ReviewPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import GameDetails from './components/GameDetails/GameDetails';
+import VerifyOtpPage from './pages/VerifyOtpPage/VerifyOtpPage';
 
 import { getUser } from './utilities/users-api';
 import sendRequest from './utilities/sendRequest';
@@ -19,16 +20,13 @@ export default function App() {
   const [reviews, setReviews] = useState([]);
   const [games, setGames] = useState([]);
 
-  
-
+  // ✅ تحميل المستخدم من localStorage
   useEffect(() => {
-    async function fetchUser() {
-      const u = await getUser();
-      setUser(u);
-    }
-    fetchUser();
+    const u = getUser(); // ما يحتاج async لأنه من localStorage
+    setUser(u);
   }, []);
 
+  // ✅ تحميل التقييمات
   useEffect(() => {
     async function fetchReviews() {
       try {
@@ -39,9 +37,9 @@ export default function App() {
       }
     }
     fetchReviews();
-    
   }, []);
 
+  // ✅ تحميل الألعاب
   useEffect(() => {
     async function fetchGames() {
       try {
@@ -80,6 +78,7 @@ export default function App() {
             <Route path="/reviews" element={<ReviewsPage user={user} />} />
             <Route path="/login" element={<LoginPage setUser={setUser} />} />
             <Route path="/signup" element={<SignupPage setUser={setUser} />} />
+            <Route path="/verify-otp" element={<VerifyOtpPage setUser={setUser} />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         )}
